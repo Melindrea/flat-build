@@ -1,0 +1,170 @@
+// ==========================================================================
+//
+// $V a r i a b l e s
+//
+// ==========================================================================
+
+// @import "vars/grid";
+// @import "vars/color";
+// @import "vars/type";
+// $G r i d
+// --------------------------------------------------------------------------
+$column: 100% / 18; //Important numbers for Golden Grid System
+$menu-breakpoint: 40em;
+
+// $C o l o r
+// --------------------------------------------------------------------------
+$step: 15;
+
+$lighter-green: #79deb6;
+$light-green: #36d796;
+$green: #00ae68;
+$dark-green: #218358;
+$darker-green: #007144;
+
+$lighter-blue: #66a1d2;
+$light-blue: #3f8fd2;
+$blue: #0b5fa5;
+$dark-blue: #25557c;
+$darker-blue: #0436cb;
+
+$lighter-orange: #ff9d73;
+$light-orange: #ff7940;
+$orange: #ff4c00;
+$dark-orange: #bf5b30;
+$darker-orange: #a63100;
+
+$white: #f8f8f8;
+$grey: #ccc;
+$dark-grey: darken($darker-green, 10);
+$black: darken($darker-green, 20);
+
+$body-copy-color: $dark-grey;
+$heading-color: $black;
+
+// .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
+
+//   .                                      '||            .
+// .||.  .... ... ... ...    ....  ... ...   ||   ....   .||.    ....
+//  ||    '|.  |   ||'  || .|...||  ||'  ||  ||  '' .||   ||   .|...||
+//  ||     '|.|    ||    | ||       ||    |  ||  .|' ||   ||   ||
+//  '|.'    '|     ||...'   '|...'  ||...'  .||. '|..'|'  '|.'  '|...'
+//       .. |      ||               ||
+//        ''      ''''             ''''                      VARIABLES
+//
+
+// .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
+
+
+
+// $BaseType
+// -------------------------------------//
+
+$font-weight: normal;
+$line-height: 1.5;
+$font-size: 112.5; // percentage value (16 * 112.5% = 18px)
+$font-base: 16 * ($font-size/100); // converts our percentage to a pixel value
+$font-family: Georgia, serif; // Non-font-face font-stack
+
+$custom-font-family: 'Calendas Plus'; // Font-face stack, if set will be added to the $base-font-family
+$font-family-monospace: 'Source Code Pro', monospace !default;
+
+$bold: bold;
+$normal: 400;
+
+// $Small Print
+// -------------------------------------//
+
+$small-print-size: 65%;
+
+
+// $Ampersand
+// -------------------------------------//
+
+$amp-fontface-name: Ampersand;
+$amp-fontface-source: local('Georgia'), local('Garamond'), local('Palatino'), local('Book Antiqua');
+$amp-fontface-fallback: local('Georgia');
+
+// Allows for our ampersand element to have differing
+// font-family from the ampersand unicode font-family.
+$amp-font-family: Verdana, sans-serif;
+
+
+// $Icon-Font-Helper
+// -------------------------------------//
+// ex.1) $icon-fonts: (icon-name);
+// ex.2) $icon-fonts: (icon-name1, icon-name2, icon-name3);
+$icon-fonts: null;
+
+
+// $TypeScale
+// -------------------------------------//
+
+$tera: 117; // 117 = 18 × 6.5
+$giga: 90; // 90 = 18 × 5
+$mega: 72; // 72 = 18 × 4
+$alpha: 60; // 60 = 18 × 3.3333
+$beta: 48; // 48 = 18 × 2.6667
+$gamma: 36; // 36 = 18 × 2
+$delta: 24; // 24 = 18 × 1.3333
+$epsilon: 21; // 21 = 18 × 1.1667
+$zeta: 18; // 18 = 18 × 1
+$eta: 15;// 15 = 18 * 0.8334
+$theta: 12;// 12 * 0.66667
+
+
+// $TypeScale-Unit
+// -------------------------------------//
+
+$type-scale-unit-value: rem;
+
+
+// $Text-Indentation
+// -------------------------------------//
+
+$indent-val: 1.5em;
+
+
+// $Pull-Quotes
+// -------------------------------------//
+
+$pull-quote-fontsize: 4em;
+$pull-quote-opacity: 0.5;
+$pull-quote-color: #dc976e;
+
+
+// $Citation
+// -------------------------------------//
+
+$cite-display: block;
+$cite-text-align: right;
+$cite-font-size: inherit;
+
+
+// $SmallCaps
+// -------------------------------------//
+
+$small-caps-color: inherit;
+$small-caps-weight: inherit;
+
+
+// $DropCap
+// -------------------------------------//
+
+$dropcap-float-position: left;
+$dropcap-font-size: 4em;
+$dropcap-font-family: inherit;
+$dropcap-txt-indent: 0;
+$dropcap-margin: inherit;
+$dropcap-padding: inherit;
+$dropcap-color: inherit;
+$dropcap-line-height: 1;
+$dropcap-bg: transparent;
+
+
+
+// $L o g o
+// --------------------------------------------------------------------------
+$logo-width: 566px;
+$logo-height: 360px;
+

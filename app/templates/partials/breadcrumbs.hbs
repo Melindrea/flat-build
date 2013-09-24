@@ -1,0 +1,15 @@
+<div class="breadcrumbs">
+    <span xmlns:v="http://rdf.data-vocabulary.org/#">
+        <span typeof="v:Breadcrumb">
+            <a href="/" rel="v:url" property="v:title">Home</a>
+        </span> »
+        {{#each breadcrumbs}}
+        <span typeof="v:Breadcrumb">
+            <a href="/" rel="v:url" property="v:title">Temp</a>
+        </span> »
+        {{/each}}
+        <span typeof="v:Breadcrumb">
+            <span class="breadcrumb_last" property="v:title">{{ title }}</span>
+        </span>
+    </span>
+</div>

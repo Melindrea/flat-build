@@ -1,0 +1,75 @@
+/* =WordPress Core
+-------------------------------------------------------------- */
+/*
+size-thumbnail, size-full
+alignnone, aligncenter, alignright, alignleft
+With caption:
+div.wp-caption.alignx>(a>img.size-x.wp-image-x)+p.wp-caption-text
+
+Without caption:
+a>img.alignx.size-x
+*/
+.alignnone {
+    margin: $indent-val/4 $indent-val $indent-val 0;
+}
+
+.aligncenter {
+    display: block;
+    margin: $indent-val/4 auto $indent-val/4 auto;
+}
+
+.alignright {
+    float: right;
+    margin: $indent-val/4 0 $indent-val $indent-val;
+}
+
+.alignleft {
+    float: left;
+    @extend .alignnone;
+}
+
+a {
+    img {
+        &.alignright {
+            @extend .alignright;
+        }
+
+        &.alignnone {
+            @extend .alignnone;
+        }
+
+        &.alignleft {
+            @extend .alignleft;
+        }
+
+        &.aligncenter {
+            @extend .aligncenter;
+        }
+    }
+}
+
+.wp-caption {
+    // background: #fff;
+    // border: 1px solid #f0f0f0;
+    // max-width: 96%; Image does not overflow the content area
+    // padding: $indent-val/4 3px 10px;
+    // text-align: center;
+
+    &.alignnone {
+        @extend .alignnone;
+    }
+
+    &.alignleft {
+        @extend .alignnone;
+    }
+
+    &.alignright {
+        @extend .alignright;
+    }
+}
+
+.wp-caption-text {
+    margin-bottom: 0;
+    font-style: italic;
+    @extend .epsilon;
+}

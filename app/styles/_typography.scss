@@ -1,0 +1,206 @@
+.eta {
+    @include type-scale($eta, $font-base, '#{$type-scale-unit-value}', $measure);
+}
+
+.theta {
+    @include type-scale($theta, $font-base, '#{$type-scale-unit-value}', $measure);
+}
+
+%cross-head {
+    text-align: center;
+}
+
+// Ornamented
+
+h1 {
+    @include ornamented('H');
+}
+
+//Ornamented
+h2 {
+    @include ornamented('f');
+}
+
+.subtitle {
+    @extend .gamma;
+    margin-top: -1.495rem;
+    font-style: italic;
+    text-align: center;
+}
+
+
+//Cross-head
+#{headers(3)} {
+    @extend %cross-head;
+}
+
+//Uppercase, higher letter spacing
+#{headers()} {
+    @include smallcaps($heading-color, $bold);
+}
+
+//Indented Sidehead
+h4,
+h5 {
+    text-indent: $indent-val;
+}
+
+h5 {
+    font-style: italic;
+}
+
+//Run-in sidehead
+h6 {
+    color: $body-copy-color;
+    font-size: inherit;
+    float: left;
+    margin-right: 0.5em;
+    line-height: inherit;
+    margin-bottom: 0;
+
+    + p {
+        @include clearfix;
+        + p {
+            text-indent: 0;
+        }
+    }
+}
+
+.contact {
+    p {
+        text-indent: 0;
+    }
+}
+
+//First paragraph Ornamented in main
+main {
+    #{headers(5)} {
+        + p {
+            @include ornamented('N', 'before');
+        }
+    }
+}
+
+.entry-content {
+    p:first-child,
+    .thumbnail + p {
+        @include ornamented('N', 'before');
+    }
+}
+
+
+
+// Overriding typeplate
+p {
+    + p {
+        margin-top: -1.1em; //leaves a margin of about 0.4em
+    }
+}
+// WP-typography
+.amp {
+    font-weight: $normal;
+    font-style: italic;
+}
+
+.caps,
+abbr {
+    @include smallcaps($body-copy-color, inherit);
+}
+
+// Not really useful,since the only thing that could be of interest is titling
+// caps, and those are only in titles
+.numbers {
+
+}
+
+
+//Initial single quote
+.quo {
+    //margin-left:-.2em;
+}
+
+// Initial double quote
+.dquo {
+    //margin-left:-.40em;
+}
+
+.table-of-content {
+    ol {
+      counter-reset: section;
+
+        li {
+            counter-increment: section;
+
+            &:before  {
+                content: counters(section, ".") ". ";
+            }
+        }
+        ol {
+            padding-left: $indent-val;
+        }
+    }
+
+}
+
+a {
+    color: $body-copy-color;
+
+    &:hover {
+        color: darken($body-copy-color, 15);
+    }
+}
+
+.sidebar h3 {
+    font-variant: normal;
+    text-transform: none;
+    font-style: italic;
+    font-weight: $normal;
+    text-align: left;
+    border-bottom: 2px solid $body-copy-color;
+}
+
+
+blockquote {
+    font-style: italic;
+    padding: .5em $indent-val 0;
+    position: relative;
+
+    &:before, p:last-child:after {
+        font-style: normal;
+        font-weight: $bold;
+        font-size: 2.5em;
+        color: lighten($body-copy-color, 30);
+    }
+    &:before {
+        content: "“";
+        position: absolute;
+        top: -0.0625em; left: 0;
+    }
+    p:last-child:after {
+        display: inline;
+        content: "”";
+        line-height: 0;
+        vertical-align: text-bottom;
+        margin-left: .125em;
+    }
+    & + figcaption {
+        margin-left: 2em;
+        margin-top: -$indent-val;
+    }
+
+    .status & {
+        margin-right: 0;
+    }
+}
+
+ul {
+    list-style-type: square;
+
+    ul {
+        list-style-type: circle;
+
+        ul {
+            list-style-type: disc;
+        }
+    }
+}

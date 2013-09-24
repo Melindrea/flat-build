@@ -1,0 +1,110 @@
+.hentry {
+    @extend %clearfix;
+
+    aside {
+        font-style: italic;
+        padding: .5em $indent-val 0;
+    }
+}
+
+.blog {
+    .page-header {
+        @include border-separator-top;
+    }
+}
+
+.entry-list {
+    @extend %list-reset;
+
+    li {
+        @include border-separator-top;
+        @include border-separator-bottom;
+    }
+}
+.single {
+    .entry-content {
+        @include border-separator-top;
+    }
+    .entry-footer {
+        @include border-separator-bottom;
+    }
+}
+.entry-meta {
+    @extend .eta;
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+.entry-summary {
+    font-style: italic;
+
+    .fontface &:before {
+        content: "";
+    }
+}
+
+.entry-navigation {
+    list-style: none;
+    padding-left: 0;
+
+    .previous-entry {
+        @include ornamented('«', 'before');
+    }
+    .next-entry {
+        @include ornamented('»', 'before');
+    }
+    .random-entry {
+        @include ornamented('?', 'before');
+    }
+    .previous-entry:before,
+    .next-entry:before,
+    .random-entry:before {
+        font-family: $custom-font-family, $font-family;
+    }
+}
+
+.wp-pagenavi {
+    line-height: 1;
+    text-align: center;
+    margin-bottom: #{calc-gutter()}em;
+
+    .pages,
+    .first,
+    .previouspostslink,
+    .extend,
+    .nextpostslink,
+    .last {
+        @extend .eta;
+        margin-bottom: 0;
+    }
+
+    .pages {
+        font-style: italic;
+    }
+
+    a {
+        text-decoration: none;
+        display: inline-block;
+        &:hover,
+        &:focus {
+            background:darken($lighter-green, 5);
+        }
+    }
+
+    .current {
+        font-weight: bold;
+        @extend .delta;
+    }
+
+    span,
+    a {
+        padding: 2px 8px;
+    }
+
+    .pages {
+        display: none;
+        @include breakpoint(45em) {
+            display: inline-block;
+        }
+    }
+}

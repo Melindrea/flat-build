@@ -1,0 +1,76 @@
+.l-container {
+    @extend %container;
+    @extend %clearfix;
+}
+
+.site-info,
+.nav-main,
+.content,
+.sidebar,
+.inner {
+    @extend %inner-container;
+    @extend %clearfix;
+}
+
+.inner {
+    padding-top: #{calc-gutter(2)}rem;
+}
+
+.content,
+.sidebar {
+    margin-bottom: #{2*calc-gutter()}rem;
+}
+
+.content-text {
+    @include breakpoint(45em) {
+        .content .inner {
+            padding: 2em;
+        }
+    }
+    @include breakpoint(55em) {
+        .content .inner {
+            padding: 2em 4em;
+        }
+    }
+    @include breakpoint(65em) {
+        @include container(3);
+    }
+    @include breakpoint(85em) {
+        @include container(5);
+    }
+}
+
+.content-media {
+    @include breakpoint(65em) {
+        @include container(3);
+    }
+    @include breakpoint(85em) {
+        @include container(5);
+    }
+}
+
+.content-first {
+    @include breakpoint(45em) {
+        .content {
+            width: calc-span(5, 8);
+            float: left;
+        }
+        .sidebar {
+            width: calc-span(3, 8);
+            float: left;
+        }
+    }
+}
+
+.section {
+    @extend %clearfix;
+
+    .column {
+        width: 50%;
+        float: left;
+    }
+}
+
+body {
+    padding-bottom: #{calc-gutter()}rem;
+}
