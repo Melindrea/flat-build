@@ -335,7 +335,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'newer:assemble:pages',
-        // 'modoernizr',
+        'modernizr',
         'clean:dist',
         'useminPrepare',
         'concurrent:dist',
@@ -352,8 +352,8 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('travis', [
-        'lint'//,
-        // 'test'
+        'lint',
+        'test'
     ]);
 
     grunt.registerTask('commit', [
