@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "golden-grid-system": "latest",
+    "wp-markdown": "https://github.com/stephenharris/WP-MarkDown/archive/master.zip",
     "mocha": "~1.12.0",
     "chai": "~1.7.2",
     "sinon-chai": "~2.4.0",
