@@ -1,0 +1,186 @@
+---
+title: Grunt tasks
+page: tasks
+sidebar: false
+class: content-text
+---
+
+# Tasks used by Grunt
+The full [Gruntfile](https://github.com/Melindrea/flat-build/blob/ea2950f1a4cef692df648178418b823d08042f08/Gruntfile.js) can be viewed at the [Flat Build](https://github.com/Melindrea/flat-build) repository. It is linked to a specific commit, and the article will be updated with new things whenever it is updated.
+
+The reason I tie it to a specific commit is to ensure that everything I say about it is exactly true, rather than code having been changed without the article having been updated.
+
+Also, the default assumption is that you want to install them locally and save them to the development dependencies, and that you have used [my instructions](http://mariehogebrandt.se/articles/installing-yeoman-grunt-bower-and-yo-on-ubuntu/) or similar so that you don't need to call `npm` using `sudo` and that GruntJS is installed.
+
+## Task Newer
+Several of the tasks are called with `newer:<taskname>`, which references the [`grunt-newer` plugin](https://github.com/tschaub/grunt-newer), a fairly new addition to grunt plugins. It saves time (and power...) to only run tasks on files that have actually changed since it was last ran, for the moment using cached timestamps (there's [an issue](https://github.com/tschaub/grunt-newer/issues/5)) to either add an option or a different set of tasks that compare the `md5sum` instead.
+
+It is installed with `npm install grunt-newer --save-dev`.
+
+## Task Watch
+The in my opinion most important grunt task — one might even say its' <i lang="fr">raison d'être</i> — is is [grunt-contrib-watch](https://github.com/gruntjs/grunt-contrib-watch), which is a task that <q>runs predefined tasks whenever watched file patterns are added, changed or deleted</q>. For instance, whenever one of my Sass files change, it runs the Compass task to recompile them. That in turn triggers the change of a CSS file, which triggers LiveReload, saving me to press `F5`!
+
+It's key to the workflow, playing a large part in `grunt server`, as detailed further below.
+
+`npm install grunt-contrib-watch --save-dev`
+
+## JS
+
+~~~
+    grunt.registerTask('js', [
+        'newer:jsvalidate',
+        'newer:jshint',
+        'modernizr'
+    ]);
+~~~
+
+The `js` task consists of three different tasks: `jsvalidate`, `jshint` and `modernizr`.
+
+### JSValidate
+[JSValidate](https://github.com/ariya/grunt-jsvalidate) is a task intended to supplement JSHint. It's fast and checks the source code (including the minified/concatenated files) for syntax errors, as a preliminary check before the files are hinted.
+
+`npm install grunt-jsvalidate --save-dev`
+
+### JSHint
+Per [their homepage](http://jshint.com/), JSHint is a <q>tool that helps to detect errors and potential problems in your JavaScript code</q>. It is a less opinionated clone of [JSLint](http://www.jslint.com/), in particular in that it allows you to set more options. The global options are set in the [`.jshintrc` file](https://github.com/Melindrea/flat-build/blob/master/.jshintrc), and you can also set options in individual files using their [inline configuration](http://jshint.com/docs/config/). The [default mocha spec file](https://github.com/Melindrea/flat-build/blob/master/test/spec/test.js) uses the two globals `describe` and `it`, as an example.
+
+The task itself is installed using one of the [core plugins](https://github.com/gruntjs/grunt-contrib-jshint), `npm install grunt-contrib-jshint --save-dev`, which is fairly straight forward. I use it to lint the `Gruntfile.js`, all under-development `*.js`-files, any tasks, and the mocha test specifications.
+
+It is ran automatically, using watch, every time either of those files change, but as I also use the `newer` task, only the one(s) that's actually changed gets linted.
+
+### Modernizr
+This has to be one of my absolute favourite tasks, and I can't say how thrilled I am that it's been been pulled into the Modernizr organization proper, and that it's now used in the default Yeoman webapp generator, because it absolutely rocks!
+
+So, what is Modernizr? It's a [feature detection library](http://modernizr.com/), which adds classes to the `html` element, allowing you to do backup plans in both JavaScript and CSS if a particular feature isn't available.
+
+For instance, imagine that your logo is a nice SVG image. If SVG isn't supported by the viewing browser, your backup is a PNG file. Using Modernizr, the code is fairly simple:
+
+~~~
+    if (!Modernizr.svg) {
+        $('.brand img').attr('src', '/images/logo.png');
+    }
+~~~
+
+Or maybe you're using CSS Gradients on some elements, but not all browsers can handle that, so then you write something along these lines:
+
+~~~
+button {
+    background-image: linear-gradient(top, #555, #333);
+    /* Technically you're probably likelier to write it something like this,
+    since you're following my tutorial and I do Compass: */
+    @include background-image(linear-gradient(top, #555, #333));
+}
+.no-cssgradients button {
+    background: url('backup-image.png');
+}
+~~~
+
+Seeing the brilliance of Modernizr yet? Of course you do, you're reading this, so clearly you're quite bright. Now, there is one big issue with Modernizr, where *big* is the operative word. Okay, not that big, the full library is 50.1kB, but it has a lot of things that you'll probably not need, so it'd be better to get a file built for that particular project.
+
+That's where [grunt-modernizr](https://github.com/Modernizr/grunt-modernizr) comes into play: `npm install grunt-modernizr --save-dev`. It goes through the specified files (JavaScript, CSS, SCSS) and builds a minified (if you so wish) file with just the tests that actually show up in any of those files. My Modernizr file clocks out at 7kb which is a nice improvement. Of course, then it gets built into the head script together with a few others on build, to save HTTP-requests.
+
+## CSS/Sass/Compass
+Okay, so let's take a step back here. What exactly is Sass, how does Compass relate to it, and how do both of them relate to CSS?
+
+### History Lesson (why Pre-Processor for CSS)
+The issue with CSS, in my view, is that it can be a pain to work with. It's nicer to divide them into logical (or not so...) modules than to work on a single huge file, but you should strive to minimise the number of HTTP-calls for performance reasons. If you have the same colour in several places and you want to tweak it, you have to find each of those places, and stuff such as that.
+
+That's where pre-processors come in. There's three large ones [Sass](http://sass-lang.com/), [Less](http://lesscss.org/) and [Stylus](http://learnboost.github.io/stylus/), where Less has it going for it that the ubiquitous Bootstrap is built in it, and Sass is probably the most versatile and most powerful of the three, which is why I prefer Sass. Also, it's the closest to CSS-syntax, and it's what I started with, so those two probably play a part.
+
+(As a sidenote, Stylus is using omitting braces and semi-colons as an advantage to Stylus, which I imagine it is to some. I don't like it, and I don't like CoffeeScript for the same reason.)
+
+#### What can we do with Sass that we cannot do with CSS?
+Simple answer? Not a single thing, because the end result is CSS. When using any pre-processors, always keep in mind when you're feeling particularly clever what it will look like once it's processed. You do not want to be responsible for the horrific specificity mess that comes from nesting things ten levels, trust me on this one. Remember, friends don't let friends bloat CSS.
+
+So now over to the more complex answer, covering four points.
+
+##### Variables
+To declare a variable in SCSS, just write `$variable-name: value;` where ever you need it, and it can then be used as `$variable-name` somewhere else, assuming it has been declared *before*.
+
+The naming doesn't matter, but since CSS is a [hyphen-delimited syntax](http://csswizardry.com/2010/12/css-camel-case-seriously-sucks/)(check out that rant...), using hypens in your variable names is probably a good idea.
+
+##### Colour functions
+Your main colour for your links is `#BADA55` (thank you Chris Coyier!), and you figure that they should be somewhat darker when you hover over them, and thus you open your trusty image program such as Gimp or Photoshop, using those nifty little sliders to get a good colour. It's used in a few places and all is well, until one day you decide that you'd like to make the `:hover`/`:focus` states *lighter* instead.
+
+Queue [Sass colour functions](http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html).
+
+~~~
+$colour: #BADA55;
+$darker-colour: darken($colour, 15); // 15% darker
+$lighter-colour: lighten($colour, 15); // 15% lighter
+$ie-filter-colour: ie-hex-str($colour); // A format that IE filters understand
+$transparent-colour: rgba($colour, 0.15); // 0.15 opacity
+~~~
+
+##### Nesting
+Remember the CSS Modernizr example from above? Wouldn't it be nice if you could have a more visible way to show the kind of relationship that you get with children etc?
+
+Here's the Sassy way:
+
+~~~
+button {
+    @include background-image(linear-gradient(top, #555, #333));
+
+    .no-cssgradients & {
+        background: url('backup-image.png');
+    }
+}
+~~~
+
+That gets compiled to the same example above.
+
+Another example: Setting states on links.
+
+~~~
+$link-color: #BADA55;
+
+a {
+    color: $link-color; // This applies to all a-elements
+    text-decoration: none;
+    border-bottom: 1px solid; // Replacing the text-decoration with a border-bottom
+
+    &:visited {
+        border-bottom: 0 none; // Removes the border-bottom on visited links
+    }
+
+    &:hover,
+    &:focus {
+        // Applies to links that are focused, or hovered over
+        color: darken($link-color, 15);
+        border-bottom: 1px solid;
+    }
+
+    &:active {
+        // Links that have been clicked, but not yet moved to their target
+        color: red;
+        border-bottom: 1px solid;
+    }
+}
+~~~
+
+This translates into the following:
+
+~~~
+a {
+    color: #BADA55;
+    text-decoration: none;
+    border-bottom: 1px solid;
+}
+
+a:visited {
+    border-bottom: 0 none;
+}
+
+a:hover,
+a:focus {
+    color: #97ba28;
+}
+
+a:active {
+    color: red;
+    border-bottom: 1px solid;
+}
+~~~
+
+
+The [Compass task](https://github.com/gruntjs/grunt-contrib-compass) is another of the core Grunt plugins.

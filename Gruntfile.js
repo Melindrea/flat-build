@@ -30,7 +30,7 @@ module.exports = function (grunt) {
             },
             compass: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-                tasks: ['newer:compass', 'modernizr']
+                tasks: ['compass', 'modernizr']
             },
             templates: {
                 files: ['<%= yeoman.app %>/templates/{,*/}*.hbs'],
@@ -45,9 +45,7 @@ module.exports = function (grunt) {
                     livereload: LIVERELOAD_PORT
                 },
                 files: [
-                    '<%= yeoman.app %>/*.html',
                     '<%= yeoman.app %>/templates/{,*/}*.hbs',
-                    '<%= yeoman.app %>/theme/**',
                     '{.tmp,<%= yeoman.app %>}/{,*/}*.css',
                     '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
                     '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,webp}'
@@ -132,7 +130,8 @@ module.exports = function (grunt) {
                 'Gruntfile.js',
                 '<%= yeoman.app %>/scripts/{,*/}*.js',
                 'tasks/{,*/}*.js',
-                'test/spec/{,*/}*.js'
+                'test/spec/{,*/}*.js',
+                '<%= yeoman.dist %>/scripts/{,*/}*.js'
             ]
         },
         mocha: {
@@ -306,8 +305,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('assemble');
 
     grunt.registerTask('js', [
-        'newer:jshint',
         'newer:jsvalidate',
+        'newer:jshint',
         'modernizr'
     ]);
 
