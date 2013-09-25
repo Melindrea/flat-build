@@ -1,4 +1,4 @@
-"use strict"
+﻿"use strict"
 
 describe "Messages", ->
     describe "about call count", ->
