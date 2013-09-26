@@ -89,17 +89,18 @@ That's where pre-processors come in. There's three large ones [Sass](http://sass
 
 (As a sidenote, Stylus is using omitting braces and semi-colons as an advantage to Stylus, which I imagine it is to some. I don't like it, and I don't like CoffeeScript for the same reason.)
 
-#### What can we do with Sass that we cannot do with CSS?
+**What can we do with Sass that we cannot do with CSS?**
+
 Simple answer? Not a single thing, because the end result is CSS. When using any pre-processors, always keep in mind when you're feeling particularly clever what it will look like once it's processed. You do not want to be responsible for the horrific specificity mess that comes from nesting things ten levels, trust me on this one. Remember, friends don't let friends bloat CSS.
 
-So now over to the more complex answer, covering four points.
+So now over to the more complex answer, covering five points.
 
-##### Variables
+#### Variables
 To declare a variable in SCSS, just write `$variable-name: value;` where ever you need it, and it can then be used as `$variable-name` somewhere else, assuming it has been declared *before*.
 
 The naming doesn't matter, but since CSS is a [hyphen-delimited syntax](http://csswizardry.com/2010/12/css-camel-case-seriously-sucks/)(check out that rant...), using hypens in your variable names is probably a good idea.
 
-##### Colour functions
+#### Colour functions
 Your main colour for your links is `#BADA55` (thank you Chris Coyier!), and you figure that they should be somewhat darker when you hover over them, and thus you open your trusty image program such as Gimp or Photoshop, using those nifty little sliders to get a good colour. It's used in a few places and all is well, until one day you decide that you'd like to make the `:hover`/`:focus` states *lighter* instead.
 
 Queue [Sass colour functions](http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html).
@@ -112,7 +113,7 @@ $ie-filter-colour: ie-hex-str($colour); // A format that IE filters understand
 $transparent-colour: rgba($colour, 0.15); // 0.15 opacity
 ~~~
 
-##### Nesting
+#### Nesting
 Remember the CSS Modernizr example from above? Wouldn't it be nice if you could have a more visible way to show the kind of relationship that you get with children etc?
 
 Here's the Sassy way:
@@ -180,6 +181,152 @@ a:active {
     color: red;
     border-bottom: 1px solid;
 }
+~~~
+
+You can even nest CSS rules, like so:
+
+~~~
+nav {
+    font {
+        family: serif;
+        weight: bold;
+        variant: small-caps;
+    }
+}
+~~~
+
+Which compiles to:
+
+~~~
+nav {
+    font-family: serif;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+~~~
+
+#### Modular Development
+I want to develop in smaller modules (though I admit I'm still working on perfecting what is a good flow...), but as I publish it it needs to be concatenated into a single file, and preferrably also be minified. In Sass, the second part is handled through a flag on the command (to simplify it), and the first is dealt with through imports.
+
+Files that are named with an underscore as the first character will not be compiled, they are referred to as "partials" that can be imported into any other Sass file (including other partials). Assume we have a file which handles the `nav` styles (say `_nav.scss`), and another file that is the actual site CSS, say `styles.scss`.
+
+The `styles.scss` file can look something like the following:
+
+~~~
+@import "compass"; // This imports the gem compass
+@import "nav"; // This imports a file named _nav.scss in the same folder
+// You can import files relative to the file, so assuming we have the _nav.scss in a subfolder called partials:
+@import "partials/nav";
+@import url('/css/header.css'); //Using an URL means CSS, obviously
+~~~
+
+#### Extension and mixins
+Let's start with mixins. You can sort of think of them like functions that are included into selectors. For an example, the `cite-style` mixin from [Typeplate]():
+
+~~~
+// Citation Mixin for Custom Styling
+@mixin cite-style($display, $text-align, $font-size) {
+    display: $display;
+    font-size: $font-size;
+    text-align: $text-align;
+}
+~~~
+
+That could be used to, for instance, differentiate between different kind of blockquotes and the figcaption related to it. You'd call it with three arguments (display, text-align and font-size), which are probably fairly straightforward to figure out what they do, and it's used like the following:
+
+~~~
+p {
+    @include cite-style(inline, right, 0.75em);
+}
+~~~
+
+Which compiles to
+
+~~~
+p {
+    display: inline;
+    font-size: 0.75em;
+    text-align: right;
+}
+~~~
+
+In a sense, extension can be compared to a argument-less mixin, though it's better to use extensions as much as you can, because it compiles differently. If you have three elements using the above `cite-style`, each of them will have that compiled into them. Of course, as you're GZIP-ing it, that matters a touch less, but I find it untidy.
+
+Extensions, however, work as follows:
+
+~~~
+%some-class {
+    // This will not actually be compiled unless extended, the % that is in the
+    // beginning of the name makes it "anonymous"
+    font-size: 1.2em;
+    color: #BADA55;
+}
+
+.some-class {
+    @extend %some-class;
+}
+
+.slightly-different-class {
+    @extend %some-class;
+    border-bottom: 1px solid;
+}
+~~~
+
+These are then compiled into the following construction:
+
+~~~
+.some-class,
+.slightly-different-class {
+    font-size: 1.2em;
+    color: #BADA55;
+}
+
+.slightly-different-class {
+    border-bottom: 1px solid;
+}
+~~~
+
+**A word of caution, however**: these combined selectors appear in the compiled CSS at the first mentioning of the class that is extended, which may lead to issues with specificity. You also cannot `@extend` into a media-query.
+
+### Over to Compass
+Per [its page](http://compass-style.org/) Compass is an <q>open-source CSS Authoring Framework</q>. It can be very opinionated (it includes a reset and a grid, among other things), but I use it to speed up development, in particularly through using the CSS3 mixins, the automated base64 encoding, the magic sprites and the nice config file which allows me to watch files with ease (less important with a Grunt workflow, admittedly, so the final bit will be covered under the Grunt task).
+
+To use the framework you need to import it, or a subset of it, before you use it, like so:
+
+~~~
+@import "compass";
+~~~
+
+That will import three large modules, namely `CSS3`, `Typography`(not used by me very often) and `Utilities`, but if you want to use their reset or layout module, those need to be imported separately. If you only want one of the modules (or a subset of the module), you can instead use `@import "compass/css3";`.
+
+If you use other Sass or Compass plugins, they are imported similarly, where I am a big fan of `breakpoint`, a gem to ease up mediaqueries.
+
+#### CSS3 mixins
+There are quite a few different ways of dealing with the prefixes, and my preference goes to using Compass mixins and let Compass deal with implementing it. Yes, it means that if I abandon my project today and never touch it again, there will be some unecessary prefixes cluttering up the CSS file. On the other hand, it's not using JavaScript to accomplish the same thing, and to me a touch more clutter is better than a touch more JavaScript.
+
+They use a similar syntax to the actual rules, so that you learn that rather than a make-believe syntax. The one thing I do wish is that it would log a warning or some-such when you're using a mixin that is superfluous due to browsers having caught up, but that is more "would be nice" than a dealbreaker.
+
+The [documentation](http://compass-style.org/reference/compass/) covers exact details on the different mixins and how to use them.
+
+#### Automated base64 encoding and linking
+Assuming that you have configurated the folders correctly (so that Compass knows where to look), it can link to images and fonts, as well as embedding them as base64.
+
+The differences is one in syntax, where for images you use `image-url` to create a link to the asset (relative or not depends on configuration) and `inline-image` to embed it. Dealing with how to do the same for fonts is a touch out of the scope of this tutorial, but [this index of helpers](http://compass-style.org/reference/compass/helpers/) should be able to point you in the right direction.
+
+#### Sprites
+This has to be one of my absolute favourite functionalities of Compass. Assume that you're using various icons throughout your design, icons that you for one reason or another either can not or would prefer not to use as a font file. This conceit requires each icon to be the same size, same filetype and use a consistent naming scheme, though in particular the last two feels like it should always be the case.
+
+Given the following scheme (brackets denoting words that can be replaced easily), placed in the imagesDir, you can import the files and use them in your sheet:
+
+<pre>
+    [icon-set]/[new].png
+    [icon-set]/[save].png
+    [icon-set]/[delete].png
+</pre>
+
+~~~
+@import "[icon-set]/*.png";
+@include "all-[icon-set]-sprites";
 ~~~
 
 
