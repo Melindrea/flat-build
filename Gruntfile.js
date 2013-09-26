@@ -147,13 +147,16 @@ module.exports = function (grunt) {
                 sassDir: '<%= yeoman.app %>/styles',
                 cssDir: '.tmp/styles',
                 imagesDir: '<%= yeoman.app %>/styles/images',
+                generatedImagesDir: '.tmp/styles/images/generated',
                 javascriptsDir: '<%= yeoman.app %>/scripts',
                 fontsDir: '<%= yeoman.app %>/styles/fonts',
-                importPath: 'app/bower_components',
-                relativeAssets: true,
+                importPath: '<%= yeoman.app %>/bower_components',
+                httpImagesPath: '/assets/images',
+                httpGeneratedImagesPath: '/assets/images/generated',
+                httpFontsPath: '/assets/fonts',
+                relativeAssets: false,
                 require: [
-                    'breakpoint',
-                    'sass-getunicode'
+                    'breakpoint'
                 ]
             },
             dist: {},
@@ -265,13 +268,6 @@ module.exports = function (grunt) {
                         'styles/fonts/*'
                     ]
                 }]
-            },
-            styles: {
-                expand: true,
-                dot: true,
-                cwd: '<%= yeoman.app %>/styles',
-                dest: '.tmp/styles/',
-                src: '{,*/}*.css'
             }
         },
         bumpup: {
@@ -280,17 +276,15 @@ module.exports = function (grunt) {
         concurrent: {
             server: [
                 'compass',
-                'copy:styles',
                 'js'
             ],
             test: [
-                'copy:styles',
+                'compass',
                 'js'
             ],
             dist: [
                 'js',
                 'compass:dist',
-                'copy:styles',
                 'imagemin',
                 'svgmin',
                 'htmlmin'

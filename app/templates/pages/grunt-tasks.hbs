@@ -221,7 +221,7 @@ The `styles.scss` file can look something like the following:
 ~~~
 
 #### Extension and mixins
-Let's start with mixins. You can sort of think of them like functions that are included into selectors. For an example, the `cite-style` mixin from [Typeplate]():
+Let's start with mixins. You can sort of think of them like functions that are included into selectors. For an example, the `cite-style` mixin from [Typeplate](https://github.com/typeplate/typeplate.github.io):
 
 ~~~
 // Citation Mixin for Custom Styling
@@ -329,5 +329,92 @@ Given the following scheme (brackets denoting words that can be replaced easily)
 @include "all-[icon-set]-sprites";
 ~~~
 
+This creates a file named `[icon-set]-[bunch of characters].png` in either your images folder or your generated images folder (if defined), and a series of classes along the lines of `.icon-set-image-name`, so in the first example, we'd have classes including `icon-set-new`. Use that class on any element that should have it, or extend it into something else. For more details on spriting, [this tutorial](http://compass-style.org/help/tutorials/spriting/) has some very nice examples for so-called power users. Let's go with one more example from there to show the power of letting Compass deal with your sprites: selector control.
 
-The [Compass task](https://github.com/gruntjs/grunt-contrib-compass) is another of the core Grunt plugins.
+Assume you have a toolbar with icons:
+
+~~~
+// Files
+icons
+    toolbar
+        - bold.png
+        - italic.png
+
+// HTML
+<div class="toolbar">
+    <ul>
+        <li><button class="bold">Bold</button></li>
+        <li><button class="italic">Italic</button></li>
+    </ul>
+</div>
+
+//SCSS
+// Note how the set of icons are named after the last segment of the url
+@import "icons/toolbar/*.png";
+
+.toolbar {
+    button {
+        @extend %ir; // Your image-replacement style of choice
+    }
+
+    .bold {
+        @include toolbar-sprite(bold)
+    }
+
+    .italic {
+        @include toolbar-sprite(italic);
+    }
+}
+~~~
+
+### Playing the devil's advocate
+Why wouldn't you want to use a pre-processor? After all, Sass is the absolutely best thing since sliced bread, as I've just finished telling you! There are a few issues with running it:
+
+#### Learning curve
+Especially if you come into a project half-way through, it takes a bit to understand the more clever solutions, such as using if-statements, loops and such. However, assuming you have someone to ask (say coworker or whomever started the project) it's not too complex, and when you're starting your own project for the first time you can just go with keeping the Sass to nesting, imports and variables, and you're already speeding up your workflow while using _almost_ pure CSS
+
+#### Bloated output
+I hate this claim, that using a pre-processor automatically creates bloat, because it's plainly not true. I think [Roy Tomeij](http://thesassway.com/articles/sass-doesnt-create-bad-code-bad-coders-do) said it best:
+
+> It [Sass] creates too specific selectors due to nesting, huge sprites and they [people who don't like pre-processors] hate the way Sass enforces an architectural approach that doesn't work. And it's all true. If you're a poor developer. You know, one who would handcraft too specific selectors, 15MB sprites and doesn't know how to cleanly structure a project.
+
+#### Setup time
+Yes, it takes some extra effort to set up the pre-processor, with Sass you need Ruby, with Less or Stylus you need NodeJS. What that means is that if you're employing someone to do frontend work that's not too comfortable around installing stuff, *set up their workspace for them*. Where I work, the new sellers and such gets a nice computer with everything necessary (including icons to server space) already installed. Me? I got a computer with an Ubuntu CD stuck on top of it and was told to knock myself out, more or less. Did I know how to install git, Ruby (for Sass), etc? Lolz nope! I learned, though =)
+
+### Grunt task to compile Sass
+The [Compass task](https://github.com/gruntjs/grunt-contrib-compass) is another of the core Grunt plugins. The options closely mimic those of Compass `config.rb` (though using `camelCase` rather than `snake_case`), and runs `compass compile` with the specified options.
+
+To install it, you should probably start with [making sure you have Sass and Compass](http://mariehogebrandt.se/articles/installing-sass-and-compass-on-ubuntu/), after which you can install the task itself: `npm install grunt-contrib-compass --save-dev`.
+
+~~~
+// <%= yeoman.app %> uses the value of the variable yeoman.app
+compass: {
+    // These options are global
+    options: {
+        sassDir: '<%= yeoman.app %>/styles', // Sassy files
+        cssDir: '.tmp/styles', // Folder it will be compiled to
+        imagesDir: '<%= yeoman.app %>/styles/images',
+        generatedImagesDir: '.tmp/styles/images/generated',
+        javascriptsDir: '<%= yeoman.app %>/scripts', // Where to put JS from extensions
+        fontsDir: '<%= yeoman.app %>/styles/fonts',
+        importPath: '<%= yeoman.app %>/bower_components', // Secondary place to import partials from
+        httpImagesPath: '/images',
+        httpGeneratedImagesPath: '/images/generated',
+        httpFontsPath: '/fonts',
+        relativeAssets: false,
+        // These are gems that need to be installed as well
+        require: [
+            'breakpoint'
+        ]
+    },
+    dist: {},
+    server: {
+        options: {
+            // The file will have line numbers of where a specific CSS rule is coming from
+            debugInfo: true
+        }
+    }
+}
+~~~
+
+**Happy Authoring!**
